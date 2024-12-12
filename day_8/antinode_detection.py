@@ -52,6 +52,12 @@ def count_antinodes(ants_pos: dict[str, list],
                     harmonic: bool) -> int:
     antinode_pos = set()
 
+    # Define how far to check for antinodes
+    if harmonic:
+        cycle_through = range(1, max(grid_size))
+    else:
+        cycle_through = [2]
+
     # Loop through all frequencies
     for x in ants_pos:
         # For every antenna on frequency x
@@ -59,10 +65,12 @@ def count_antinodes(ants_pos: dict[str, list],
             # Check every other antenna within frequency
             for other_pos in ants_pos[x]:
                 if pos != other_pos:
-                    if not harmonic:
+
+                    for i in cycle_through:
                         found_pos = (None, None)
-                        found_pos = (pos[0] - 2 * (pos[0] - other_pos[0]),
-                                     pos[1] - 2 * (pos[1] - other_pos[1]))
+                        found_pos = (pos[0] - i * (pos[0] - other_pos[0]),
+                                     pos[1] - i * (pos[1] - other_pos[1]))
+
                         if (found_pos[0] < grid_size[0]
                                 and found_pos[1] < grid_size[1]
                                 and found_pos[0] >= 0
@@ -71,23 +79,8 @@ def count_antinodes(ants_pos: dict[str, list],
                             if verbose:
                                 print("From:", pos, "found pos:",
                                       found_pos, "for freq", x)
-                    if harmonic:
-                        for i in range(1, max(grid_size)):
-                            found_pos = (None, None)
-                            found_pos = (pos[0] - i * (pos[0] - other_pos[0]),
-                                         pos[1] - i * (pos[1] - other_pos[1]))
-
-                            if (found_pos[0] < grid_size[0]
-                                    and found_pos[1] < grid_size[1]
-                                    and found_pos[0] >= 0
-                                    and found_pos[1] >= 0):
-                                antinode_pos.add(found_pos)
-                                if verbose:
-                                    print("From:", pos, "found pos:",
-                                          found_pos, "for freq", x)
-
-                            else:
-                                break
+                        else:
+                            break
 
     return len(antinode_pos)
 
