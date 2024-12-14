@@ -1,6 +1,7 @@
 import sys
 
 
+# Reads in a file and turns it into a grid (2d list)
 def file_to_grid(map_file: str) -> list[list]:
     with open(map_file, "r") as f:
         read_map = f.readlines()
